@@ -1,30 +1,48 @@
-package main
+package render
 
 import (
+	"bytes"
+	"fmt"
+	"github.com/khodemobin/go_web_app_mux/pkg/config"
 	"html/template"
+	log "log"
 	"net/http"
 	"path/filepath"
 )
 
-var functions = template.FuncMap{
+var functions = template.FuncMap{}
 
+var app *config.AppConfig
+
+func NewTemplates(a *config.AppConfig) {
+	app = a
 }
 
-func RenderTemplate(w http.ResponseWriter, tmpl string) {
-	_, err := RenderTemplateTest(w, "./templates/"+tmpl+".tmpl")
-	if err != nil {
-		panic(err)
+func Template(w http.ResponseWriter, tmpl string) {
+	var tc map[string]*template.Template
+
+	if app.UseCache {
+		tc = app.TemplateCache
+	} else {
+		tc, _ = CreateTemplateCache()
 	}
 
-	parsedTemplate, _ := template.ParseFiles("./templates/" + tmpl + ".tmpl")
-	err = parsedTemplate.Execute(w, nil)
+	t, ok := tc[tmpl+".tmpl"]
+	if !ok {
+		log.Fatalln("could not get template from template cache")
+	}
+
+	buf := new(bytes.Buffer)
+
+	_ = t.Execute(buf, nil)
+	_, err := buf.WriteTo(w)
+
 	if err != nil {
-		panic(err)
-		return
+		fmt.Println("Error writing template to browser", err)
 	}
 }
 
-func RenderTemplateTest(w http.ResponseWriter, tmpl string) (map[string]*template.Template, error) {
+func CreateTemplateCache() (map[string]*template.Template, error) {
 	myCache := map[string]*template.Template{}
 	pages, err := filepath.Glob("./templates/*.page.tmpl")
 	if err != nil {

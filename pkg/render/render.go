@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/khodemobin/go_web_app_mux/pkg/config"
+	"github.com/khodemobin/go_web_app_mux/pkg/models"
 	"html/template"
 	log "log"
 	"net/http"
@@ -18,7 +19,12 @@ func NewTemplates(a *config.AppConfig) {
 	app = a
 }
 
-func Template(w http.ResponseWriter, tmpl string) {
+func addDefaultData(td *models.TemplateData) *models.TemplateData{
+	return td
+}
+
+
+func Template(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
 	var tc map[string]*template.Template
 
 	if app.UseCache {
@@ -34,7 +40,7 @@ func Template(w http.ResponseWriter, tmpl string) {
 
 	buf := new(bytes.Buffer)
 
-	_ = t.Execute(buf, nil)
+	_ = t.Execute(buf, td)
 	_, err := buf.WriteTo(w)
 
 	if err != nil {

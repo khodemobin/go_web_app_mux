@@ -26,6 +26,7 @@ func main() {
 	handlers.NewHandlers(repo)
 
 	http.HandleFunc("/", handlers.Repo.Home)
+	http.HandleFunc("/about", handlers.Repo.About)
 
 	fmt.Println("Listen to port 8000")
 	_ = http.ListenAndServe(":8000", nil)

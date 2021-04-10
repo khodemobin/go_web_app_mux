@@ -1,9 +1,5 @@
-{{template "base".}}
+<div>
+    <h1>About page</h1>
 
-{{define "content"}}
-    <div>
-        <h1>About page</h1>
-
-        <p>This case from the template: {{index.StringMap}}</p>
-    </div>
-{{end}}
+    <p>This case from the template: {{index .StringMap "test"}}</p>
+</div>

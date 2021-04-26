@@ -1,5 +1,13 @@
 <div>
     <h1>About page</h1>
 
-    <p>This case from the template: {{index .StringMap "test"}}</p>
+    <p>This case from the template: {{index .StringMap "text"}}</p>
+
+    <p>
+        {{if ne (index .StringMap "remote_ip") ""}}
+            Your remote IP is {{index .StringMap "remote_ip"}}
+        {{else}}
+            i don't know remote IP visit <a href="/">Home</a>
+        {{end}}
+    </p>
 </div>

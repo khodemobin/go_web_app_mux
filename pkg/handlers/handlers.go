@@ -7,8 +7,6 @@ import (
 	"net/http"
 )
 
-
-
 var Repo *Repository
 
 type Repository struct {
@@ -26,12 +24,16 @@ func NewHandlers(r *Repository) {
 }
 
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
+	remoteIP := r.RemoteAddr
+	m.App.Session.Put(r.Context(), "remote_id", remoteIP)
 	render.Template(w, "home.page", &models.TemplateData{})
 }
 
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 	stringMap := make(map[string]string)
-	stringMap["test"] = "Hello world"
+	stringMap["text"] = "Hello world"
+	remoteIp := m.App.Session.GetString(r.Context(), "remote_id")
+	stringMap["remote_ip"] = remoteIp
 
 	render.Template(w, "about.page", &models.TemplateData{
 		StringMap: stringMap,

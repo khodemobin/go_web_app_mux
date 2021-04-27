@@ -1,13 +1,21 @@
-<div>
-    <h1>About page</h1>
+{{template "base" .}}
 
-    <p>This case from the template: {{index .StringMap "text"}}</p>
+{{define "content"}}
 
-    <p>
-        {{if ne (index .StringMap "remote_ip") ""}}
-            Your remote IP is {{index .StringMap "remote_ip"}}
-        {{else}}
-            i don't know remote IP visit <a href="/">Home</a>
-        {{end}}
-    </p>
-</div>
+    <div>
+        <h1>About page</h1>
+
+        <p>This case from the template: {{index .StringMap "text"}}</p>
+
+        <p>
+            {{if ne (index .StringMap "remote_ip") ""}}
+                Your remote IP is {{index .StringMap "remote_ip"}}
+            {{else}}
+                i don't know remote IP visit <a href="/">Home</a>
+            {{end}}
+
+            <img src="/static/images/test.jpg" width="150">
+        </p>
+    </div>
+
+{{end}}

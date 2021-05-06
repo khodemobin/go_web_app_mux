@@ -3,12 +3,14 @@ package render
 import (
 	"bytes"
 	"fmt"
-	"github.com/khodemobin/go_web_app_mux/pkg/config"
-	"github.com/khodemobin/go_web_app_mux/pkg/models"
 	"html/template"
 	log "log"
 	"net/http"
 	"path/filepath"
+
+	"github.com/justinas/nosurf"
+	"github.com/khodemobin/go_web_app_mux/pkg/config"
+	"github.com/khodemobin/go_web_app_mux/pkg/models"
 )
 
 var functions = template.FuncMap{}
@@ -19,12 +21,12 @@ func NewTemplates(a *config.AppConfig) {
 	app = a
 }
 
-func addDefaultData(td *models.TemplateData) *models.TemplateData{
+func addDefaultData(td *models.TemplateData, req *http.Request) *models.TemplateData {
+	td.CSRFToken = nosurf.Token(req)
 	return td
 }
 
-
-func Template(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
+func Template(w http.ResponseWriter, req *http.Request, tmpl string, td *models.TemplateData) {
 	var tc map[string]*template.Template
 
 	if app.UseCache {
@@ -40,6 +42,7 @@ func Template(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
 
 	buf := new(bytes.Buffer)
 
+	td = addDefaultData(td, req)
 	_ = t.Execute(buf, td)
 	_, err := buf.WriteTo(w)
 
